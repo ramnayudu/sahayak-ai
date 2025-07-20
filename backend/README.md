@@ -1,15 +1,35 @@
-# Sahayak Backend
+# 🚀 AI Sahayak Backend
 
-FastAPI backend for the Sahayak AI multi-grade classroom assistant.
+FastAPI-based backend for the AI-powered multi-grade classroom assistant with modular architecture.
 
-## Features
+## 🏗️ Architecture Overview
 
-- **FastAPI** - High-performance async web framework
+### Modular Design
+```
+backend/
+├── main.py                 # FastAPI application entry point
+├── routers/               # API endpoint organization
+│   ├── auth_router.py         # Authentication endpoints
+│   ├── ai_router.py           # AI/ML content generation
+│   └── lessons_router.py      # Lesson management
+├── services/              # Business logic layer
+│   ├── firebase_service.py    # Firebase integration
+│   ├── vertex_ai_service.py   # Google Cloud AI
+│   └── ollama_service.py      # Local AI models
+├── .env                   # Environment configuration
+└── requirements.txt       # Python dependencies
+```
+
+## ✨ Features
+
+- **Modular Architecture** - Organized routers and services
+- **FastAPI** - High-performance async web framework with auto-documentation
 - **Firebase Integration** - Authentication, Firestore, and Storage
-- **Vertex AI Integration** - Google Cloud AI/ML services
-- **Ollama Support** - Local AI model inference
-- **Multi-mode AI** - Online (Vertex AI) and Offline (Ollama) modes
-- **RESTful API** - Clean API design with automatic documentation
+- **Vertex AI Integration** - Google Cloud AI/ML services (Gemini/Gemma)
+- **Ollama Support** - Local AI model inference for offline mode
+- **Dual AI Modes** - Online (Vertex AI) and Offline (Ollama) operation
+- **Development Mode** - Graceful handling of missing external services
+- **Interactive Documentation** - Swagger UI at `/docs`
 
 ## Tech Stack
 

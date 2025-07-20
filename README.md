@@ -90,7 +90,7 @@ sahayak-ai/
 ### Key Commands
 ```bash
 # Start backend
-cd backend && source venv/bin/activate && uvicorn simple_main:app --reload
+cd backend && source venv/bin/activate && python -m uvicorn main:app --reload
 
 # Start frontend  
 cd frontend && npm run dev
@@ -98,6 +98,13 @@ cd frontend && npm run dev
 # Install as PWA
 # Look for install icon in browser address bar
 ```
+
+### Backend Architecture
+- **Modular Design**: Organized with routers and services
+- **API Routes**: `/api/auth`, `/api/ai`, `/api/lessons`
+- **Service Layer**: Firebase, Vertex AI, and Ollama integration
+- **Development Mode**: Graceful handling of missing external services
+- **Auto-Documentation**: Interactive API docs at `/docs`
 
 ## 📚 Documentation
 
@@ -114,7 +121,9 @@ cd frontend && npm run dev
 - Progressive Web App (PWA) with offline support
 - Firebase Authentication integration
 - React-based responsive UI with routing
-- FastAPI backend with CORS support
+- **Modular FastAPI backend** with organized routers and services
+- **Interactive API documentation** at `/docs`
+- **Multi-service architecture** (Firebase, Vertex AI, Ollama ready)
 - Real-time PWA status monitoring
 - Environment-based configuration
 - Modern development setup with Vite

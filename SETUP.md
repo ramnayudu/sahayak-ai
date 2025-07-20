@@ -47,10 +47,12 @@ pip install fastapi uvicorn python-multipart
 #### 2.3 Start the Backend Server
 
 ```bash
-uvicorn simple_main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ✅ **Backend should now be running at:** `http://localhost:8000`
+
+**API Documentation:** `http://localhost:8000/docs` (Interactive Swagger UI)
 
 ### 3. Frontend Setup
 
@@ -138,8 +140,9 @@ npm run dev
 
 Open your browser and visit:
 - `http://localhost:8000` - Should show API status
-- `http://localhost:8000/health` - Should show health check
-- `http://localhost:8000/docs` - Should show API documentation
+- `http://localhost:8000/api/health` - Should show detailed health check with services status
+- `http://localhost:8000/docs` - Should show interactive API documentation (Swagger UI)
+- `http://localhost:8000/api/modes` - Should show available AI modes (Setu/Nivaas)
 
 ### 5.2 Test Frontend Application
 
@@ -221,8 +224,15 @@ gcloud services enable aiplatform.googleapis.com
 
 **Issue: Backend connection failed**
 - Verify backend is running on port 8000
-- Check CORS configuration
+- Check CORS configuration in `main.py`
 - Ensure firewall isn't blocking the port
+- Visit `/api/health` to check service status
+
+**Issue: API endpoints not working**
+- Check if all services are available at `/api/health`
+- Verify `.env` configuration is correct
+- Check server logs for import errors
+- Ensure all required Python packages are installed
 
 **Issue: Firebase authentication not working**
 - Verify Firebase configuration in `.env`
@@ -254,7 +264,18 @@ gcloud services enable aiplatform.googleapis.com
 sahayak-ai/
 ├── backend/
 │   ├── venv/              # Python virtual environment
-│   ├── simple_main.py     # FastAPI server
+│   ├── main.py            # FastAPI application (main entry point)
+│   ├── routers/           # API route handlers
+│   │   ├── __init__.py
+│   │   ├── auth_router.py     # Authentication endpoints
+│   │   ├── ai_router.py       # AI/ML endpoints  
+│   │   └── lessons_router.py  # Lesson management endpoints
+│   ├── services/          # Business logic services
+│   │   ├── __init__.py
+│   │   ├── firebase_service.py    # Firebase integration
+│   │   ├── vertex_ai_service.py   # Google Cloud AI
+│   │   └── ollama_service.py      # Local AI models
+│   ├── .env               # Environment configuration
 │   └── requirements.txt   # Python dependencies
 ├── frontend/
 │   ├── src/
@@ -279,9 +300,31 @@ After successful setup:
 
 1. **Explore the Application**: Navigate through all pages and features
 2. **Test PWA Features**: Install the app and test offline functionality
-3. **Customize Configuration**: Modify Firebase rules, add authentication
-4. **Add Content**: Start creating lesson plans and classroom materials
-5. **Deploy to Production**: Follow deployment guide for hosting
+3. **Explore API Documentation**: Visit `http://localhost:8000/docs` for interactive API reference
+4. **Test Backend Services**: Check `/api/health` to see service status
+5. **Customize Configuration**: Modify Firebase rules, add authentication
+6. **Add Content**: Start creating lesson plans and classroom materials
+7. **Deploy to Production**: Follow deployment guide for hosting
+
+## 🏗️ Backend Architecture Overview
+
+The backend uses a **modular architecture** designed for scalability:
+
+### **Router Structure**
+- **`/api/auth`**: User authentication and session management
+- **`/api/ai`**: AI content generation (lesson plans, activities)
+- **`/api/lessons`**: Lesson plan CRUD operations and management
+
+### **Service Layer**
+- **`FirebaseService`**: Authentication, Firestore database operations
+- **`VertexAIService`**: Google Cloud AI integration (Gemini/Gemma models)
+- **`OllamaService`**: Local AI models for offline functionality
+
+### **Development Features**
+- **Graceful Degradation**: Missing services show as "not_available" instead of crashing
+- **Auto-Documentation**: Swagger UI at `/docs` with interactive API testing
+- **Hot Reload**: Automatic server restart on code changes
+- **Environment Configuration**: `.env` file for easy configuration management
 
 ## 🤝 Need Help?
 

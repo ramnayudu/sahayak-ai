@@ -5,9 +5,27 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 
-from routers import ai_router, auth_router, lessons_router
-from services.firebase_service import FirebaseService
-from services.vertex_ai_service import VertexAIService
+# Import routers and services with error handling
+try:
+    from routers import ai_router, auth_router, lessons_router
+    routers_available = True
+except ImportError as e:
+    print(f"Warning: Could not import routers: {e}")
+    routers_available = False
+
+try:
+    from services.firebase_service import FirebaseService
+    firebase_available = True
+except ImportError:
+    print("Warning: Firebase service not available")
+    firebase_available = False
+    
+try:
+    from services.vertex_ai_service import VertexAIService
+    vertex_ai_available = True
+except ImportError:
+    print("Warning: Vertex AI service not available")
+    vertex_ai_available = False
 
 # Load environment variables
 load_dotenv()
@@ -31,14 +49,18 @@ app.add_middleware(
 # Security
 security = HTTPBearer()
 
-# Initialize services
-firebase_service = FirebaseService()
-vertex_ai_service = VertexAIService()
+# Initialize services with error handling
+firebase_service = FirebaseService() if firebase_available else None
+vertex_ai_service = VertexAIService() if vertex_ai_available else None
 
-# Include routers
-app.include_router(auth_router.router, prefix="/api/auth", tags=["authentication"])
-app.include_router(ai_router.router, prefix="/api/ai", tags=["ai"])
-app.include_router(lessons_router.router, prefix="/api/lessons", tags=["lessons"])
+# Include routers if available
+if routers_available:
+    try:
+        app.include_router(auth_router.router, prefix="/api/auth", tags=["authentication"])
+        app.include_router(ai_router.router, prefix="/api/ai", tags=["ai"])
+        app.include_router(lessons_router.router, prefix="/api/lessons", tags=["lessons"])
+    except Exception as e:
+        print(f"Warning: Could not include some routers: {e}")
 
 @app.get("/")
 async def root():
@@ -53,18 +75,24 @@ async def root():
 async def health_check():
     """Detailed health check"""
     try:
-        # Check Firebase connection
-        firebase_status = await firebase_service.health_check()
+        services_status = {}
         
-        # Check Vertex AI connection
-        vertex_ai_status = await vertex_ai_service.health_check()
+        # Check Firebase connection
+        if firebase_service:
+            services_status["firebase"] = await firebase_service.health_check()
+        else:
+            services_status["firebase"] = "not_available"
+        
+        # Check Vertex AI connection  
+        if vertex_ai_service:
+            services_status["vertex_ai"] = await vertex_ai_service.health_check()
+        else:
+            services_status["vertex_ai"] = "not_available"
         
         return {
             "status": "healthy",
-            "services": {
-                "firebase": firebase_status,
-                "vertex_ai": vertex_ai_status
-            }
+            "services": services_status,
+            "mode": "development" if os.getenv("DEV_MODE") == "true" else "production"
         }
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Service unavailable: {str(e)}")

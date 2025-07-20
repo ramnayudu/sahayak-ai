@@ -8,21 +8,40 @@ import json
 class VertexAIService:
     def __init__(self):
         """Initialize Vertex AI client"""
-        project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
-        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+        self.dev_mode = os.getenv("DEV_MODE", "false").lower() == "true"
         
-        vertexai.init(project=project_id, location=location)
-        
-        # Initialize models
-        self.text_model = TextGenerationModel.from_pretrained("text-bison")
-        self.chat_model = ChatModel.from_pretrained("chat-bison")
+        if not self.dev_mode:
+            project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
+            location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+            
+            if project_id:
+                vertexai.init(project=project_id, location=location)
+                
+                # Initialize models
+                try:
+                    self.text_model = TextGenerationModel.from_pretrained("text-bison")
+                    self.chat_model = ChatModel.from_pretrained("chat-bison")
+                except Exception:
+                    self.text_model = None
+                    self.chat_model = None
+            else:
+                self.text_model = None
+                self.chat_model = None
+        else:
+            self.text_model = None
+            self.chat_model = None
     
     async def health_check(self) -> bool:
         """Check Vertex AI connection"""
+        if self.dev_mode:
+            return True  # Skip Vertex AI check in dev mode
+            
         try:
             # Test with a simple prediction
-            response = self.text_model.predict("Hello", max_output_tokens=10)
-            return bool(response.text)
+            if self.text_model:
+                response = self.text_model.predict("Hello", max_output_tokens=10)
+                return bool(response.text)
+            return False
         except Exception:
             return False
     

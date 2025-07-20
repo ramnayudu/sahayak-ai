@@ -8,21 +8,29 @@ from datetime import datetime
 class FirebaseService:
     def __init__(self):
         """Initialize Firebase Admin SDK"""
-        if not firebase_admin._apps:
-            # Initialize with service account key or default credentials
-            if os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY"):
-                cred = credentials.Certificate(
-                    json.loads(os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY"))
-                )
-            else:
-                cred = credentials.ApplicationDefault()
-            
-            firebase_admin.initialize_app(cred)
+        self.dev_mode = os.getenv("DEV_MODE", "false").lower() == "true"
         
-        self.db = firestore.client()
+        if not self.dev_mode:
+            if not firebase_admin._apps:
+                # Initialize with service account key or default credentials
+                if os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY"):
+                    cred = credentials.Certificate(
+                        json.loads(os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY"))
+                    )
+                else:
+                    cred = credentials.ApplicationDefault()
+                
+                firebase_admin.initialize_app(cred)
+            
+            self.db = firestore.client()
+        else:
+            self.db = None
     
     async def health_check(self) -> bool:
         """Check Firebase connection"""
+        if self.dev_mode:
+            return True  # Skip Firebase check in dev mode
+            
         try:
             # Try to read from a collection
             self.db.collection('health_check').limit(1).get()
