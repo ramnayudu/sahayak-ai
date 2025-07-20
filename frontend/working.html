@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sahayak - Frontend</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header { 
+            background: #4f46e5; 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 1.1rem; }
+        .content { padding: 30px; }
+        .status-card { 
+            background: #f0fdf4; 
+            border: 2px solid #16a34a; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin: 20px 0; 
+        }
+        .status-card h3 { color: #16a34a; margin-bottom: 10px; }
+        .api-test { 
+            background: #f8fafc; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin: 20px 0; 
+        }
+        .btn { 
+            background: #4f46e5; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 1rem;
+            margin: 10px 5px;
+        }
+        .btn:hover { background: #3730a3; }
+        .result { 
+            background: #1f2937; 
+            color: #10b981; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-family: 'Courier New', monospace; 
+            margin-top: 10px;
+            min-height: 50px;
+        }
+        .features { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px; 
+            margin-top: 30px; 
+        }
+        .feature { 
+            background: #f9fafb; 
+            padding: 20px; 
+            border-radius: 10px; 
+            border-left: 4px solid #4f46e5; 
+        }
+        .feature h4 { color: #1f2937; margin-bottom: 10px; }
+        .feature p { color: #6b7280; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 AI Sahayak</h1>
+            <p>AI-Powered Multi-Grade Classroom Assistant</p>
+        </div>
+        
+        <div class="content">
+            <div class="status-card">
+                <h3>✅ Frontend Status: WORKING</h3>
+                <p>Great! The frontend is now displaying correctly and can connect to the backend.</p>
+            </div>
+
+            <div class="api-test">
+                <h3>🔧 Backend API Testing</h3>
+                <p>Test the connection between frontend and backend:</p>
+                <button class="btn" onclick="testBackend()">Test Backend Connection</button>
+                <button class="btn" onclick="testHealth()">Check Health</button>
+                <button class="btn" onclick="testAPI()">Test API</button>
+                
+                <div id="result" class="result">
+                    Click a button above to test backend connectivity...
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <h4>🎯 Multi-Grade Teaching</h4>
+                    <p>AI assistant designed specifically for rural Indian classrooms with multiple grade levels.</p>
+                </div>
+                
+                <div class="feature">
+                    <h4>🌐 Dual Mode Operation</h4>
+                    <p>Works online with Vertex AI (Sahayak Setu) and offline with Ollama (Sahayak Nivaas).</p>
+                </div>
+                
+                <div class="feature">
+                    <h4>📚 Lesson Planning</h4>
+                    <p>Generate contextual lesson plans adapted to Indian education standards.</p>
+                </div>
+                
+                <div class="feature">
+                    <h4>📱 PWA Ready</h4>
+                    <p>Progressive Web App that works offline and can be installed on mobile devices.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        function updateResult(message, isError = false) {
+            const result = document.getElementById('result');
+            result.style.color = isError ? '#ef4444' : '#10b981';
+            result.textContent = message;
+        }
+        
+        async function testBackend() {
+            updateResult('Testing backend connection...');
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                updateResult(`✅ Backend Response: ${data.message}`);
+            } catch (error) {
+                updateResult(`❌ Backend Error: ${error.message}`, true);
+            }
+        }
+        
+        async function testHealth() {
+            updateResult('Checking backend health...');
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                updateResult(`✅ Health Check: ${data.status} - ${data.service}`);
+            } catch (error) {
+                updateResult(`❌ Health Check Failed: ${error.message}`, true);
+            }
+        }
+        
+        async function testAPI() {
+            updateResult('Testing API documentation...');
+            try {
+                const response = await fetch(`${API_BASE}/docs`);
+                if (response.ok) {
+                    updateResult('✅ API Documentation available at /docs');
+                    window.open(`${API_BASE}/docs`, '_blank');
+                } else {
+                    updateResult('❌ API docs not accessible', true);
+                }
+            } catch (error) {
+                updateResult(`❌ API Error: ${error.message}`, true);
+            }
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            setTimeout(testBackend, 1000);
+        };
+    </script>
+</body>
+</html>

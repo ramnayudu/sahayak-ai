@@ -1,0 +1,29 @@
+# Docker Compose for Sahayak AI Local Development
+
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: sahayak-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./models:/app/models
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    restart: unless-stopped
+    
+  sqlite:
+    image: sqlite:latest  
+    container_name: sahayak-sqlite
+    volumes:
+      - sqlite_data:/data
+    environment:
+      - SQLITE_DATABASE=sahayak_offline.db
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+  sqlite_data:
