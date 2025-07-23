@@ -1,5 +1,49 @@
 # Shared prompt templates for AI models
 
+# Orchestrator Agent Templates
+ORCHESTRATOR_ANALYSIS_TEMPLATE = """
+Analyze the following user request and determine which specialized agents should be invoked.
+
+User request: "{user_request}"
+
+For each agent type, respond with "true" if the agent should be invoked, or "false" if not.
+
+1. Lesson Creator: Should create educational content and lesson plans.
+2. Image Generator: Should create visual aids and illustrations.
+3. Assignment Creator: Should create assignments, worksheets, and assessments.
+4. Translator: Should translate content to another language (only if a specific non-English language is requested).
+
+Format your response as a JSON object with the following structure:
+{{
+    "lesson_creator": true/false,
+    "image_generator": true/false,
+    "assignment_creator": true/false,
+    "translator": true/false,
+    "target_language": "language_name" (if translator is true, otherwise null)
+}}
+"""
+
+ORCHESTRATOR_COMBINE_TEMPLATE = """
+You have received responses from multiple specialized agents for the following user request:
+
+User request: "{user_request}"
+
+The responses from each agent are provided below:
+{agent_responses}
+
+Your task is to combine these responses into a cohesive, well-structured output that addresses the user's request.
+Ensure that the content flows naturally and that there are no redundancies or contradictions.
+
+Format your response with clear sections for:
+1. Lesson content
+2. Visual aids (if available)
+3. Assignments and assessments (if available)
+4. Translated content (if available)
+
+Make the response comprehensive, educational, and engaging for the target audience.
+"""
+
+# Lesson Creation Agent Templates
 LESSON_PLAN_TEMPLATE = """
 Create a comprehensive lesson plan for a multi-grade classroom in rural India with the following specifications:
 
@@ -186,3 +230,22 @@ ASSESSMENT_TYPES = [
     "Portfolio assessment",
     "Performance-based assessment"
 ]
+
+# Translation Agent Template
+TRANSLATION_TEMPLATE = """
+Translate the following educational content from English to {target_language}. 
+Maintain the educational meaning, tone, and structure while ensuring the translation is culturally appropriate 
+and uses terminology that would be familiar to {target_language}-speaking students in grade {grade}.
+
+**Content to Translate:**
+{content}
+
+**Guidelines:**
+- Preserve formatting and structure (headings, bullet points, numbering)
+- Maintain educational terminology but use appropriate {target_language} equivalents
+- Adapt examples to be culturally relevant if necessary
+- Ensure the language level is appropriate for grade {grade} students
+- For specialized terms, provide the {target_language} translation followed by the English term in parentheses the first time it appears
+
+Format your response with the same structure as the original content, with each section clearly translated.
+"""
