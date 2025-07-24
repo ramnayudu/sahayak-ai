@@ -124,12 +124,13 @@ cd frontend && npm run dev
 - **Modular FastAPI backend** with organized routers and services
 - **Interactive API documentation** at `/docs`
 - **Multi-service architecture** (Firebase, Vertex AI, Ollama ready)
+- **Agent-based AI framework** using ADK and A2A protocol
+- **Specialized AI agents** for lesson creation, image generation, assignment creation, and language translation
 - Real-time PWA status monitoring
 - Environment-based configuration
 - Modern development setup with Vite
 
 🚧 **In Development:**
-- AI-powered lesson plan generation
 - Multi-grade content adaptation
 - Student progress tracking
 - Offline AI model integration (Ollama)
