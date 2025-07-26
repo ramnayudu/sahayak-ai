@@ -147,3 +147,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 *Making quality education accessible to every rural classroom in India* 🇮🇳 
+
+Stream URL 
+
+https://us-central1-aiplatform.googleapis.com/v1/projects/concrete-bridge-466718-s2/locations/us-central1/reasoningEngines/6857390139648245760:streamQuery?alt=sse
